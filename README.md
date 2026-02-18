@@ -1,13 +1,41 @@
 
 # PERN TODO (Modern Minimal Template)
 
-このリポジトリは、**PERN（PostgreSQL / Express / React / Node.js）構成**の  
+このリポジトリは、**PERN（PostgreSQL / Express / React / Node.js）構成**の
 **今風・最小・SQL直書き**な ToDo アプリケーションテンプレートです。
 
 - deprecated な依存関係を極力避ける
 - `pg`（node-postgres）を用いた **生SQL** を明示的に扱う
 
 を目的として設計されています。
+
+---
+
+## 前提環境
+
+このアプリケーションを実行するには、以下の環境が必要です。
+
+### 必須
+- **Node.js**: v18.x 以上（LTS推奨）
+- **npm**: v9.x 以上（Node.jsに同梱）
+- **PostgreSQL**: v14.x 以上
+
+### 推奨
+- **OS**: macOS / Linux / Windows（WSL2推奨）
+- **ターミナル**: bash / zsh / PowerShell
+
+### バージョン確認方法
+
+```bash
+# Node.js のバージョン確認
+node --version
+
+# npm のバージョン確認
+npm --version
+
+# PostgreSQL のバージョン確認
+psql --version
+```
 
 ---
 
