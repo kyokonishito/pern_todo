@@ -6,7 +6,6 @@
 
 - deprecated な依存関係を極力避ける
 - `pg`（node-postgres）を用いた **生SQL** を明示的に扱う
-- 将来的な **Db2（ibm_db）へのコード変換**を前提にした構成
 
 を目的として設計されています。
 
@@ -85,8 +84,7 @@ pern-todo-modern/
 
 ### 主な役割
 - ToDo の作成 / 一覧 / 更新 / 削除
-- API 契約が変わらない限り、  
-  **Postgres版 → Db2版に切り替えてもそのまま利用可能**
+
 
 ---
 
@@ -96,27 +94,6 @@ pern-todo-modern/
 
 - ✅ PostgreSQL + Node.js の **最小 CRUD 参照実装**
 - ✅ **AI Agent による DB アクセスコード変換**の検証素材
-- ✅ Postgres ⇄ Db2 間の差分（SQL / ドライバ / 接続方式）の明確化
-- ✅ deprecated に悩まされない、現在進行形の依存構成
-
-特に、
-
-- `pg` → `ibm_db`
-- `$1` → `?`
-- `SERIAL` → `GENERATED ALWAYS AS IDENTITY`
-- `RETURNING` → 追い `SELECT`
-
-といった **典型的な RDB 差分**を扱う題材として適しています。
-
----
-
-## 次のステップ例
-
-- server 側を `ibm_db` に置き換えた Db2 版の作成
-- Postgres / Db2 両対応の DAO 抽象化
-- AI Agent 用の「変換ルール表」「変換プロンプト」の作成
-- 同一テスト（Postman / Supertest）による Before / After 検証
-
 
 ---
 
@@ -215,10 +192,7 @@ npm run dev
 
 - ToDo の追加 / 完了チェック / 削除ができること
 - サーバ側ログに SQL 実行エラーが出ていないこと
-- `server/src/routes/todos.js` に **SQL が直接書かれている**ことを確認
 
-この状態で、PostgreSQL → Db2（`pg` → `ibm_db`）への
-コード変換・動作比較をすぐに開始できます。
 
 ---
 
