@@ -63,11 +63,6 @@ pern-todo-modern/
   - `INSERT ... RETURNING`
   - `COALESCE` を使った部分更新
 
-これにより、
-- PostgreSQL → Db2 変換時の差分
-- AI Agent によるルールベース変換
-
-を検証しやすくなっています。
 
 ---
 
