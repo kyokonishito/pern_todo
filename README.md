@@ -1,0 +1,229 @@
+
+# PERN TODO (Modern Minimal Template)
+
+このリポジトリは、**PERN（PostgreSQL / Express / React / Node.js）構成**の  
+**今風・最小・SQL直書き**な ToDo アプリケーションテンプレートです。
+
+- deprecated な依存関係を極力避ける
+- `pg`（node-postgres）を用いた **生SQL** を明示的に扱う
+- 将来的な **Db2（ibm_db）へのコード変換**を前提にした構成
+
+を目的として設計されています。
+
+---
+
+## 同梱内容（構成）
+
+```
+pern-todo-modern/
+├─ server/                     # バックエンド（Node.js + Express）
+│  ├─ src/
+│  │  ├─ db.js                # PostgreSQL 接続（pg Pool）
+│  │  ├─ app.js               # Express エントリポイント
+│  │  └─ routes/
+│  │      └─ todos.js         # ToDo CRUD API（SQL直書き）
+│  ├─ .env                    # 環境変数（要作成）
+│  ├─ .env.example            # 環境変数サンプル
+│  └─ package.json            # サーバ依存関係定義
+│
+└─ client/                    # フロントエンド（Vite + React）
+   ├─ index.html
+   ├─ src/
+   │  ├─ main.jsx
+   │  └─ App.jsx              # ToDo UI / API 呼び出し
+   ├─ .env                    # 環境変数（要作成）
+   ├─ .env.example            # 環境変数サンプル
+   └─ package.json            # クライアント依存関係定義
+```
+
+---
+
+## サーバ側の特徴（server/）
+
+### 技術スタック
+- Node.js（LTS想定）
+- Express 4.x
+- pg（node-postgres）
+- dotenv / cors
+
+### 設計方針
+- ORMは使用せず、**SQLをそのままコードに記述**
+- PostgreSQL 固有の構文（例：`$1` プレースホルダ、`RETURNING`）を明示
+- ルーティング・DB接続・SQLを最小限のファイル数に集約
+
+### 主なファイル
+
+#### `src/db.js`
+- `pg.Pool` を使った PostgreSQL 接続管理
+- `.env` または環境変数から接続情報を取得
+
+#### `src/routes/todos.js`
+- ToDo の CRUD API を実装
+- 以下のような **変換対象として重要な要素**を含む：
+  - `$1, $2 ...` プレースホルダ
+  - `INSERT ... RETURNING`
+  - `COALESCE` を使った部分更新
+
+これにより、
+- PostgreSQL → Db2 変換時の差分
+- AI Agent によるルールベース変換
+
+を検証しやすくなっています。
+
+---
+
+## クライアント側の特徴（client/）
+
+### 技術スタック
+- Vite
+- React 18
+
+### 設計方針
+- 見た目は最小限、ロジックも最小限
+- `/api/todos` を叩くだけの薄い UI
+- バックエンド検証のための **動作確認用フロント**
+
+### 主な役割
+- ToDo の作成 / 一覧 / 更新 / 削除
+- API 契約が変わらない限り、  
+  **Postgres版 → Db2版に切り替えてもそのまま利用可能**
+
+---
+
+## このテンプレートの狙い
+
+このテンプレートは、以下の用途を想定しています。
+
+- ✅ PostgreSQL + Node.js の **最小 CRUD 参照実装**
+- ✅ **AI Agent による DB アクセスコード変換**の検証素材
+- ✅ Postgres ⇄ Db2 間の差分（SQL / ドライバ / 接続方式）の明確化
+- ✅ deprecated に悩まされない、現在進行形の依存構成
+
+特に、
+
+- `pg` → `ibm_db`
+- `$1` → `?`
+- `SERIAL` → `GENERATED ALWAYS AS IDENTITY`
+- `RETURNING` → 追い `SELECT`
+
+といった **典型的な RDB 差分**を扱う題材として適しています。
+
+---
+
+## 次のステップ例
+
+- server 側を `ibm_db` に置き換えた Db2 版の作成
+- Postgres / Db2 両対応の DAO 抽象化
+- AI Agent 用の「変換ルール表」「変換プロンプト」の作成
+- 同一テスト（Postman / Supertest）による Before / After 検証
+
+
+---
+
+## 使い方（1〜2分で起動）
+
+### 1. PostgreSQL の初期化
+
+PostgreSQL にログインし、以下を実行してください。
+
+```sql
+CREATE DATABASE pern_todo;
+\c pern_todo
+
+CREATE TABLE IF NOT EXISTS todos (
+  id    SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  done  BOOLEAN NOT NULL DEFAULT FALSE
+);
+```
+
+---
+
+### 2. サーバ起動（Node.js + Express）
+
+#### 環境変数の設定
+
+```bash
+cd pern-todo-modern/server
+cp .env.example .env   # 環境に合わせて編集
+```
+
+`.env` ファイルの内容例：
+
+```env
+# PostgreSQL 接続情報
+PGUSER=postgres
+PGPASSWORD=postgres
+PGHOST=localhost
+PGDATABASE=pern_todo
+PGPORT=5432
+
+# サーバーポート
+PORT=8000
+```
+
+#### サーバー起動
+
+```bash
+npm install
+npm run dev
+```
+
+- 起動後、API は以下で待ち受けます。
+  - http://localhost:8000
+- 疎通確認：
+  - http://localhost:8000/api/todos
+
+---
+
+### 3. クライアント起動（Vite + React）
+
+#### 環境変数の設定
+
+```bash
+cd pern-todo-modern/client
+cp .env.example .env   # 必要に応じて編集
+```
+
+`.env` ファイルの内容例：
+
+```env
+# Vite 開発サーバーポート
+VITE_PORT=5173
+
+# API サーバー URL
+VITE_API=http://localhost:8000/api
+```
+
+**注意**:
+- `VITE_` プレフィックスが付いた環境変数のみがクライアントコードに公開されます
+- ポート番号やAPI URLを変更する場合は、この `.env` ファイルを編集してください
+
+#### クライアント起動
+
+```bash
+npm install
+npm run dev
+```
+
+- ブラウザで以下にアクセス
+  - http://localhost:5173
+
+---
+
+### 4. 動作確認ポイント
+
+- ToDo の追加 / 完了チェック / 削除ができること
+- サーバ側ログに SQL 実行エラーが出ていないこと
+- `server/src/routes/todos.js` に **SQL が直接書かれている**ことを確認
+
+この状態で、PostgreSQL → Db2（`pg` → `ibm_db`）への
+コード変換・動作比較をすぐに開始できます。
+
+---
+
+## License
+
+This project is licensed under the **Apache License 2.0**.
+
+See the [LICENSE](LICENSE) file for details.
