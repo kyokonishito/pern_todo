@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS todos (
 #### 環境変数の設定
 
 ```bash
-cd pern-todo-modern/server
+cd pern_todo/server
 cp .env.example .env   # 環境に合わせて編集
 ```
 
@@ -180,7 +180,7 @@ npm run dev
 #### 環境変数の設定
 
 ```bash
-cd pern-todo-modern/client
+cd pern_todo/client
 cp .env.example .env   # 必要に応じて編集
 ```
 
