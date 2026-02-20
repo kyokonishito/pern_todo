@@ -1,8 +1,7 @@
 
 # PERN TODO (Modern Minimal Template)
 
-このリポジトリは、**PERN（PostgreSQL / Express / React / Node.js）構成**の
-**今風・最小・SQL直書き**な ToDo アプリケーションテンプレートです。
+このリポジトリは、**PERN（PostgreSQL / Express / React / Node.js）構成**のシンプルなToDo アプリケーションテンプレートです。
 
 - deprecated な依存関係を極力避ける
 - `pg`（node-postgres）を用いた **生SQL** を明示的に扱う
