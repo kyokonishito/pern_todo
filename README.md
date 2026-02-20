@@ -41,7 +41,7 @@ psql --version
 ## 同梱内容（構成）
 
 ```
-pern-todo-modern/
+pern_todo/
 ├─ server/                     # バックエンド（Node.js + Express）
 │  ├─ src/
 │  │  ├─ db.js                # PostgreSQL 接続（pg Pool）
